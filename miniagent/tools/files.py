@@ -9,12 +9,16 @@
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 
 from .base import tool
 
 _MAX_READ_BYTES = 200_000
 _TEXT_SUFFIXES = {".txt", ".md", ".py", ".json", ".yaml", ".yml", ".csv", ".log", ".html", ".toml", ".ini"}
+# Windows 盘符路径（C:/... 或 C:\...）。Path.is_absolute() 只在 Windows 上认得它，
+# 在 POSIX 上会被当成相对路径放行，因此需要单独匹配。
+_WIN_ABSOLUTE = re.compile(r"^[A-Za-z]:[\\/]")
 
 
 def _sandbox_root() -> Path:
@@ -31,8 +35,9 @@ def _resolve(path_text: str) -> Path:
         raise ValueError("路径不能为空")
 
     root = _sandbox_root()
-    candidate = Path(path_text.strip().replace("\\", "/"))
-    if candidate.is_absolute() or candidate.drive:
+    raw = path_text.strip().replace("\\", "/")
+    candidate = Path(raw)
+    if candidate.is_absolute() or candidate.drive or _WIN_ABSOLUTE.match(raw):
         raise ValueError("不允许使用绝对路径，请给出相对于工作区的路径")
 
     target = (root / candidate).resolve()
