@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# 运行时产物
+.workspace/
+runs/
+*.db
+*.jsonl
+
+# 环境变量与密钥
+.env
+
+# 测试与工具缓存
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 编辑器
+.idea/
+.vscode/
+.DS_Store
